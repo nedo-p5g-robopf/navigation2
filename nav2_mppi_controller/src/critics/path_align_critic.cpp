@@ -16,6 +16,7 @@
 
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xmath.hpp>
+#include "nav2_core/exceptions.hpp"
 
 namespace mppi::critics
 {
@@ -31,7 +32,12 @@ void PathAlignCritic::initialize()
 
   getParam(max_path_occupancy_ratio_, "max_path_occupancy_ratio", 0.07);
   getParam(offset_from_furthest_, "offset_from_furthest", 20);
-  getParam(trajectory_point_step_, "trajectory_point_step", 4);
+  int trajectory_point_step_value{};
+  getParam(trajectory_point_step_value, "trajectory_point_step", 4);
+  if (trajectory_point_step_value <= 0) {
+    throw nav2_core::PlannerException("trajectory_point_step must be a positive integer.");
+  }
+  trajectory_point_step_ = static_cast<size_t>(trajectory_point_step_value);
   getParam(
     threshold_to_consider_,
     "threshold_to_consider", 0.5);
