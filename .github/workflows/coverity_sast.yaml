@@ -1,0 +1,30 @@
+name: SAST using Coverity
+
+on:
+  push:
+    branches:
+      - coverity-sast
+
+jobs:
+  run_analysis:
+    name: Run Analysis
+    runs-on: [self-hosted, sec]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          path: navigation2
+      - name: Run analysis
+        id: run_analysis
+        run: |
+          docker run --rm \
+              -v ./navigation2:/opt/overlay_ws/src/navigation2 \
+              -v ./results:/opt/results \
+              -v /opt/cov-analysis-linux64-2026.3.2:/opt/cov-analysis-linux64-2026.3.2 \
+              -v navigation2_sast_ccache:/tmp/.ccache \
+              navigation2:humble-visualizer \
+              bash /opt/overlay_ws/src/navigation2/coverity_sast/analyze_in_container.sh
+      - name: Upload Analysis Results
+        uses: actions/upload-artifact@v6
+        with:
+          path: results/coverity.json
