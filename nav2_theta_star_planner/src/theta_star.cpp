@@ -26,9 +26,9 @@ ThetaStar::ThetaStar()
   allow_unknown_(true),
   size_x_(0),
   size_y_(0),
-  index_generated_(0)
+  index_generated_(0),
+  exp_node(nullptr)
 {
-  exp_node = new tree_node;
 }
 
 void ThetaStar::setStartAndGoal(
